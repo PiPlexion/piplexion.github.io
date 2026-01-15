@@ -1,13 +1,16 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=JetBrains+Mono:wght@400;600&display=swap');
 
 :root {
-  --bg-main: #f8fafc;
-  --bg-panel: #ffffff;
-  --border-soft: #e2e8f0;
-  --text-main: #1e293b;
-  --text-muted: #64748b;
-  --accent-main: #0ea5a4;
-  --accent-soft: #38bdf8;
+  /* ===== Base Colors ===== */
+  --bg-main: #fffaf0;        /* soft ivory page background */
+  --bg-panel: #fff8e1;       /* light golden panels */
+  --border-soft: #f3e2b3;    /* subtle golden border */
+  --text-main: #000000;      /* black text for readability */
+  --text-muted: #6b5e4a;     /* muted brown-golden for secondary text */
+  
+  /* ===== Accent Colors ===== */
+  --accent-main: #d4af37;    /* rich golden for buttons, highlights */
+  --accent-soft: #f3e1a8;    /* soft golden for hover, output bg, panels */
 }
 
 body {
@@ -19,7 +22,7 @@ body {
   line-height: 1.7;
 }
 
-/* Navigation */
+/* ===== Navigation ===== */
 nav {
   background: var(--bg-panel);
   padding: 14px 18px;
@@ -35,10 +38,11 @@ nav a {
 }
 
 nav a:hover {
+  color: var(--accent-soft);
   text-decoration: underline;
 }
 
-/* Headings */
+/* ===== Headings ===== */
 h1 {
   margin-top: 28px;
   font-weight: 600;
@@ -50,32 +54,38 @@ h2 {
   font-weight: 600;
 }
 
-/* Panels */
-section {
+/* ===== Panels / Labs / Tool Boxes ===== */
+section, .tool-box {
   background: var(--bg-panel);
   border: 1px solid var(--border-soft);
   border-radius: 14px;
   padding: 24px;
   margin-top: 28px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+  transition: transform 0.2s;
 }
 
-/* Inputs */
+section:hover, .tool-box:hover {
+  transform: translateY(-2px);
+}
+
+/* ===== Inputs ===== */
 input {
-  background: #f1f5f9;
-  color: var(--text-main);
+  background: #fff8e8;        /* soft golden input background */
   border: 1px solid var(--border-soft);
+  border-radius: 10px;
   padding: 10px 12px;
   font-family: 'JetBrains Mono', monospace;
-  border-radius: 8px;
+  font-size: 16px;
   width: 100%;
-  max-width: 320px;
+  max-width: 350px;
 }
 
 input::placeholder {
   color: var(--text-muted);
 }
 
-/* Buttons */
+/* ===== Buttons ===== */
 button {
   margin-top: 14px;
   background: var(--accent-main);
@@ -86,37 +96,39 @@ button {
   font-family: 'Inter', sans-serif;
   font-weight: 500;
   cursor: pointer;
+  transition: background 0.2s;
 }
 
 button:hover {
   background: var(--accent-soft);
 }
 
-/* Output */
+/* ===== Output Boxes ===== */
 pre {
   margin-top: 18px;
-  background: #f1f5f9;
+  background: var(--accent-soft);   /* soft golden background for output */
+  border-left: 4px solid var(--accent-main);
   padding: 16px;
   border-radius: 10px;
-  border-left: 4px solid var(--accent-main);
   font-family: 'JetBrains Mono', monospace;
+  font-size: 16px;
+  overflow-x: auto;
+  color: var(--text-main);
 }
 
-/* Paragraphs */
+/* ===== Paragraphs ===== */
 p {
   color: var(--text-muted);
 }
 
-/* Divider */
+/* ===== Divider ===== */
 hr {
   border: none;
   border-top: 1px solid var(--border-soft);
   margin: 30px 0;
 }
-/* ==============================
-   Footer – Licensing & Citation
-   ============================== */
 
+/* ===== Footer ===== */
 footer {
   margin-top: 70px;
   padding-bottom: 30px;
