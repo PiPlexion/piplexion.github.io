@@ -71,19 +71,19 @@ function analyze() {
 
 <body>
   
-<section id="ipaCvPatternTool">
-<pre class="tool-box">
-    <h2>IPA-based C/V Pattern</h2>
-    <pre class="subtitle">
-        Phonological analysis based on IPA sounds
+<section class="tool-box" aria-labelledby="cvPatternTitle">
+  <h2 id="cvPatternTitle">IPA-based C/V Pattern</h2>
+  <p class="subtitle">
+    Phonological analysis based on IPA sounds 
+  </p>
 
-    <label for="ipaInput">IPA Transcription</label>
-    <input type="text" id="ipaInput" placeholder="Enter IPA transcription">
+  <label for="ipaInput">IPA Transcription</label>
+  <input type="text" id="ipaInput" aria-describedby="cvPatternDesc" placeholder="e.g. /tʃeɪndʒ/, /straɪk/, [fəˈnɛtɪks]">
+  <p id="cvPatternDesc" class="sr-only">Enter a phonetic transcription using IPA symbols. The tool will output the consonant–vowel (C/V) pattern.</p>
 
-    <button onclick="generateCV()">Generate C/V Pattern</button>
+  <button onclick="generateCV()" aria-controls="output">Generate C/V Pattern</button>
 
-    <pre id="output"></pre>
-
+  <div class="result" id="output" role="region" aria-live="polite"></div>
 </section>
 
 <script>
