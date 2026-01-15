@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -8,6 +9,7 @@
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
+
 <!-- Navigation Menu -->
 <nav>
   <a href="index.html">Home</a> |
@@ -33,6 +35,22 @@
   <pre id="output"></pre>
 </section>
 
+<!-- IPA-based C/V Pattern Tool Section -->
+<section id="ipaCvPatternTool" class="tool-box">
+  <h2>IPA-based C/V Pattern</h2>
+  <p class="subtitle">
+    Enter a phonetic transcription using IPA symbols.
+  </p>
+
+  <label for="ipaInput">IPA Transcription</label>
+  <input type="text" id="ipaInput" placeholder="e.g. /tʃeɪndʒ/, /straɪk/, [fəˈnɛtɪks]">
+
+  <button onclick="generateCV()">Generate C/V Pattern</button>
+
+  <pre id="ipaOutput" class="result">Your C/V pattern will appear here...</pre>
+</section>
+
+<!-- Scripts -->
 <script>
 function analyze() {
   const word = document.getElementById("word").value.trim().toLowerCase();
@@ -56,22 +74,6 @@ function analyze() {
     "C/V Pattern: " + cvPattern;
 }
 
-<!-- IPA-based C/V Pattern Tool Section -->
-<section id="ipaCvPatternTool" class="tool-box">
-  <h2>IPA-based C/V Pattern</h2>
-  <p class="subtitle">
-    Enter a phonetic transcription using IPA symbols. 
-  </p>
-
-  <label for="ipaInput">IPA Transcription</label>
-  <input type="text" id="ipaInput" placeholder="e.g. /tʃeɪndʒ/, /straɪk/, [fəˈnɛtɪks]">
-
-  <button onclick="generateCV()">Generate C/V Pattern</button>
-
-  <pre id="ipaOutput" class="result">Your C/V pattern will appear here...</pre>
-</section>
-
-<script>
 function generateCV() {
     let ipa = document.getElementById("ipaInput").value.trim();
 
@@ -129,8 +131,8 @@ function generateCV() {
 
         i++;
     }
-  
-  // Display result
+
+    // Display result
     const outputBox = document.getElementById("ipaOutput");
     outputBox.innerText = `IPA: ${ipa}\nC/V Pattern: ${pattern}`;
 
@@ -143,6 +145,7 @@ function generateCV() {
 }
 </script>
 
+<!-- Footer -->
 <footer>
   <hr>
   <p>
@@ -158,8 +161,8 @@ function generateCV() {
   </p>
 </footer>
 
-
 </body>
 </html>
+
 
 
