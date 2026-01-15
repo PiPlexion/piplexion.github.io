@@ -149,18 +149,32 @@ footer a {
 footer a:hover {
   text-decoration: underline;
 }
-/* ===== Labs Links Styling ===== */
-.labs a,
-section a {
-  color: var(--accent-main);
-  text-decoration: none;
-  font-weight: 500;
+/* ==============================
+   Labs Section Styling (Home)
+   ============================== */
+
+h2 + ul {
+  list-style: none;
+  padding-left: 0;
+  margin-top: 18px;
 }
 
-.labs a:hover,
-section a:hover {
-  color: #b8962e; /* slightly deeper gold */
+h2 + ul li {
+  margin-bottom: 12px;
+  color: var(--text-muted);
+}
+
+h2 + ul li a {
+  color: var(--accent-main);
+  font-weight: 600;
+  text-decoration: none;
+}
+
+h2 + ul li a:hover {
+  color: #b8962e;
   text-decoration: underline;
 }
+
+
 
 
