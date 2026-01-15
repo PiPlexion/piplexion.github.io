@@ -56,6 +56,114 @@ function analyze() {
     "C/V Pattern: " + cvPattern;
 }
 </script>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>PiPlexion | IPA-based C/V Pattern</title>
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="favicon.png">
+
+    <!-- External CSS -->
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+<div class="tool-box">
+    <h1>IPA-based C/V Pattern</h1>
+    <div class="subtitle">
+        Phonological analysis based on IPA sounds (affricates & diphthongs treated as single units)
+    </div>
+
+    <label for="ipaInput">IPA Transcription</label>
+    <input type="text" id="ipaInput" placeholder="e.g. /tʃeɪndʒ/, /straɪk/, [fəˈnɛtɪks]">
+
+    <button onclick="generateCV()">Generate C/V Pattern</button>
+
+    <div class="result" id="output"></div>
+</div>
+
+<script>
+function generateCV() {
+    let ipa = document.getElementById("ipaInput").value;
+
+    // Remove slashes, brackets, spaces, stress & length marks
+    ipa = ipa.replace(/[\/\[\]\sˈˌː]/g, "");
+
+    /* -----------------------------
+       IPA DIPHTHONGS (single V)
+       ----------------------------- */
+    const diphthongs = [
+        "aɪ","aʊ","ɔɪ",
+        "eɪ","oʊ",
+        "ɪə","eə","ʊə"
+    ];
+
+    /* -----------------------------
+       IPA MONOPHTHONG VOWELS
+       ----------------------------- */
+    const vowels = [
+        "i","ɪ","e","ɛ","æ","a","ɑ","ɒ","ɔ","o","ʊ","u",
+        "ʌ","ə","ɜ","ɚ","ɝ","ɐ","œ","ø","y","ɨ"
+    ];
+
+    /* -----------------------------
+       IPA AFFRICATES (single C)
+       ----------------------------- */
+    const affricates = [
+        "tʃ","dʒ","ts","dz","tɕ","dʑ","tʂ","dʐ"
+    ];
+
+    let pattern = "";
+    let i = 0;
+
+    while (i < ipa.length) {
+
+        // Check affricates first
+        let matched = false;
+        for (let aff of affricates) {
+            if (ipa.startsWith(aff, i)) {
+                pattern += "C";
+                i += aff.length;
+                matched = true;
+                break;
+            }
+        }
+        if (matched) continue;
+
+        // Check diphthongs
+        for (let dip of diphthongs) {
+            if (ipa.startsWith(dip, i)) {
+                pattern += "V";
+                i += dip.length;
+                matched = true;
+                break;
+            }
+        }
+        if (matched) continue;
+
+        // Check monophthong vowels
+        if (vowels.includes(ipa[i])) {
+            pattern += "V";
+        } else {
+            // Everything else is consonantal
+            pattern += "C";
+        }
+
+        i++;
+    }
+
+    document.getElementById("output").innerHTML =
+        `C/V Pattern: <span class="pattern">${pattern}</span>`;
+}
+</script>
+
+</body>
+</html>
+
+
 <footer>
   <hr>
   <p>
