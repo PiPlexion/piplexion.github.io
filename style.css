@@ -42,23 +42,30 @@ nav a:hover {
   text-decoration: underline;
 }
 
-/* ===== Headings ===== */
+/* Main Page / Lab Title */
 h1 {
-  margin-top: 28px;
-  font-weight: 600;
+  margin-top: 40px;
+  margin-bottom: 20px;
+  color: #1f2937;        /* deep slate / charcoal */
+  font-weight: 700;
 }
 
+/* Section Headings (e.g. Phonetics Lab, Morphology Lab) */
 h2 {
-  margin-top: 0;
-  color: var(--accent-main);
+  margin-top: 32px;
+  margin-bottom: 16px;
+  color: #374151;        /* slightly lighter slate */
   font-weight: 600;
 }
 
+/* Tool Headings (C/V Pattern, Consonant Clusters, IPA Tools) */
 h3 {
-  margin-top: 0;
-  color: var(--accent-main);
+  margin-top: 24px;
+  margin-bottom: 12px;
+  color: #4b5563;        /* neutral gray, professional */
   font-weight: 600;
 }
+
 
 /* ===== Panels / Labs / Tool Boxes ===== */
 section, .tool-box {
