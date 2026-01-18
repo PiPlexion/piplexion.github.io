@@ -117,6 +117,126 @@ function generateCV() {
 }
 </script>
 
+<!-- Consonant Clusters Tool -->
+<div class="tool-box">
+  <h3>Consonant Clusters</h3>
+  <p>Enter phonetic transcription (IPA) to see the consonant cluster breakdown:</p>
+  <input type="text" id="clusterInput" placeholder="e.g., striŋ">
+  <button id="clusterButton">Analyze Cluster</button>
+
+  <div class="cluster-output">
+    <input type="text" id="preInitial" placeholder="Pre-initial" readonly>
+    <input type="text" id="initial" placeholder="Initial" readonly>
+    <input type="text" id="postInitial" placeholder="Post-initial" readonly>
+    <input type="text" id="peak" placeholder="Peak" readonly>
+    <input type="text" id="preFinal" placeholder="Pre-final" readonly>
+    <input type="text" id="final" placeholder="Final" readonly>
+    <input type="text" id="postFinal1" placeholder="Post-final 1" readonly>
+    <input type="text" id="postFinal2" placeholder="Post-final 2" readonly>
+    <input type="text" id="postFinal3" placeholder="Post-final 3" readonly>
+  </div>
+</div>
+
+<link rel="stylesheet" href="style.css">
+
+<script>
+document.getElementById('clusterButton').addEventListener('click', function() {
+  let ipa = document.getElementById('clusterInput').value.trim().toLowerCase();
+
+  // Reset all boxes
+  ['preInitial','initial','postInitial','peak','preFinal','final','postFinal1','postFinal2','postFinal3'].forEach(id => {
+    document.getElementById(id).value = '';
+  });
+
+  // Pre-final consonants
+  const preFinalConsonants = ['m','n','ŋ','l','s'];
+
+  // Vowels (monophthongs + diphthongs)
+  const vowels = ['i','ɪ','e','ɛ','æ','ɑ','ɒ','ɔ','ʊ','u','ʌ','ə','eɪ','aɪ','ɔɪ','aʊ','oʊ','ɪə','eə','ʊə'];
+
+  // Multi-character consonants (affricates/digraphs)
+  const multiConsonants = ['tʃ','dʒ','ʃ','θ','ð','ŋ','ʒ','hw','ɹ'];
+
+  // Function to split IPA into logical segments (affricates treated as single)
+  function splitIPA(str){
+    let arr = [];
+    for(let i=0;i<str.length;i++){
+      let twoChar = str[i]+(str[i+1]||'');
+      if(multiConsonants.includes(twoChar)){
+        arr.push(twoChar);
+        i++;
+      } else {
+        arr.push(str[i]);
+      }
+    }
+    return arr;
+  }
+
+  let ipaArr = splitIPA(ipa);
+
+  // Detect peak (vowel/diphthong)
+  let peakIndex = -1;
+  for(let i=0;i<ipaArr.length;i++){
+    // Check two-char diphthongs
+    let twoChar = ipaArr[i]+(ipaArr[i+1]||'');
+    if(vowels.includes(twoChar)){
+      peakIndex = i;
+      break;
+    } else if(vowels.includes(ipaArr[i])){
+      peakIndex = i;
+      break;
+    }
+  }
+  if(peakIndex === -1) peakIndex = ipaArr.length-1; // default last char as peak
+
+  // Assign peak (single or diphthong)
+  let peak = ipaArr[peakIndex];
+  if(peakIndex<ipaArr.length-1 && vowels.includes(peak+ipaArr[peakIndex+1])){
+    peak += ipaArr[peakIndex+1];
+    ipaArr.splice(peakIndex,2,peak);
+  }
+
+  // Pre-peak letters
+  let prePeak = ipaArr.slice(0, peakIndex);
+  let postPeak = ipaArr.slice(peakIndex+1);
+
+  // Assign boxes
+  let preInitial = prePeak[0]||'';
+  let initial = prePeak[1]||'';
+  let postInitial = prePeak[2]||'';
+
+  let preFinal='', final='', postFinal=[];
+
+  if(postPeak.length>0){
+    // If last consonant is pre-final type, assign preFinal
+    let lastChar = postPeak[postPeak.length-1];
+    let secondLast = postPeak[postPeak.length-2]||'';
+    if(preFinalConsonants.includes(secondLast)){
+      preFinal = secondLast;
+      final = lastChar;
+      postFinal = postPeak.slice(0, postPeak.length-2);
+    } else if(preFinalConsonants.includes(lastChar)){
+      preFinal = lastChar;
+      postFinal = postPeak.slice(0, postPeak.length-1);
+    } else {
+      final = lastChar;
+      postFinal = postPeak.slice(0, postPeak.length-1);
+    }
+  }
+
+  // Fill boxes
+  document.getElementById('preInitial').value = preInitial;
+  document.getElementById('initial').value = initial;
+  document.getElementById('postInitial').value = postInitial;
+  document.getElementById('peak').value = peak;
+  document.getElementById('preFinal').value = preFinal;
+  document.getElementById('final').value = final;
+  for(let i=0;i<3;i++){
+    if(postFinal[i]) document.getElementById('postFinal'+(i+1)).value = postFinal[i];
+  }
+});
+</script>
+
 <!-- Footer -->
 <footer>
   <hr>
