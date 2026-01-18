@@ -54,6 +54,12 @@ h2 {
   font-weight: 600;
 }
 
+h3 {
+  margin-top: 0;
+  color: var(--accent-main);
+  font-weight: 600;
+}
+
 /* ===== Panels / Labs / Tool Boxes ===== */
 section, .tool-box {
   background: var(--bg-panel);
