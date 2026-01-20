@@ -117,6 +117,9 @@ function generateCV() {
 }
 </script>
 
+<!-- Consonant Clusters -->
+  <link rel="stylesheet" href="style.css">
+  <section id="ConsonantClustersTool" class="tool-box">
 <input id="clusterInput" placeholder="Enter consonant cluster (e.g. spl, nts)">
 
 <select id="clusterType">
@@ -138,8 +141,7 @@ function generateCV() {
 <input id="postFinal2" placeholder="Post-final 2" readonly>
 <input id="postFinal3" placeholder="Post-final 3" readonly>
 
-<script src="script.js"></script>
-
+</script>
 function analyzeCluster() {
   const cluster = document
     .getElementById("clusterInput")
@@ -201,7 +203,7 @@ function analyzeCluster() {
       document.getElementById("postFinal3").value = remaining.shift();
   }
 }
-
+</script>
 
   </section>
 <!-- Footer -->
