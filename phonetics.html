@@ -117,6 +117,117 @@ function generateCV() {
 }
 </script>
 
+  <!-- Consonant Clusters Tool -->
+<section id="ConsonantClustersTool" class="tool-box">
+  <h3>Consonant Clusters</h3>
+  <div class="syllable-input">
+    <input type="text" id="ipaInput" placeholder="Enter IPA syllable (e.g., /splɪnts/)">
+    <button onclick="analyzeSyllable()">Analyze</button>
+  </div>
+
+  <div class="grid">
+    <div class="section-title">Onset</div>
+    <div class="box"><span class="box-label">Pre-initial</span><span id="preInitial"></span></div>
+    <div class="box"><span class="box-label">Initial</span><span id="initial"></span></div>
+    <div class="box"><span class="box-label">Post-initial</span><span id="postInitial"></span></div>
+
+    <div class="section-title">Rhyme</div>
+    <div class="box"><span class="box-label">Peak</span><span id="peak"></span></div>
+    <div class="box"><span class="box-label">Prefinal</span><span id="prefinal"></span></div>
+    <div class="box"><span class="box-label">Final</span><span id="final"></span></div>
+    <div class="box"><span class="box-label">Post-final 1</span><span id="postFinal1"></span></div>
+    <div class="box"><span class="box-label">Post-final 2</span><span id="postFinal2"></span></div>
+    <div class="box"><span class="box-label">Post-final 3</span><span id="postFinal3"></span></div>
+  </div>
+  </section>
+
+   <script>
+    function analyzeSyllable() {
+      const ipa = document.getElementById('ipaInput').value.replace(/\//g, '').trim();
+
+      // Clear previous values
+      ['preInitial','initial','postInitial','peak','prefinal','final','postFinal1','postFinal2','postFinal3'].forEach(id => document.getElementById(id).textContent = '');
+
+      if (!ipa) return;
+
+      // English consonants and vowels
+      const consonants = ['p','b','t','d','k','g','f','v','θ','ð','s','z','ʃ','ʒ','h','m','n','ŋ','l','r','j','w'];
+      const vowels = ['i','ɪ','e','ɛ','æ','ɑ','ɒ','ɔ','o','ʊ','u','ʌ','ə','ɜ','eɪ','aɪ','ɔɪ','aʊ','oʊ','ɪə','eə','ʊə']; // monophthongs + common diphthongs
+
+      let onset = {pre:'', init:'', post:''};
+      let rhyme = {peak:'', prefinal:'', final:'', pf1:'', pf2:'', pf3:''};
+
+      // Detect peak (first vowel or diphthong)
+      let peakMatch = '';
+      for (let v of vowels.sort((a,b)=>b.length - a.length)) {
+        if (ipa.includes(v)) {
+          peakMatch = v;
+          break;
+        }
+      }
+
+      if (!peakMatch) {
+        alert('No vowel/diphthong found!');
+        return;
+      }
+
+      const peakIndex = ipa.indexOf(peakMatch);
+      rhyme.peak = peakMatch;
+
+      // Split onset and coda
+      const onsetPart = ipa.slice(0, peakIndex).split('');
+      let codaPart = ipa.slice(peakIndex + peakMatch.length).split('');
+
+      // Onset clustering based on types
+      // Type I: s + stop
+      if (onsetPart[0] === 's' && ['p','t','k','b','d','g'].includes(onsetPart[1])) {
+        onset.pre = 's';
+        onset.init = onsetPart[1] || '';
+        onset.post = onsetPart.slice(2).join('');
+      }
+      // Type II: C + l/r/w/j
+      else if (onsetPart.length === 2 && ['l','r','w','j'].includes(onsetPart[1])) {
+        onset.init = onsetPart[0];
+        onset.post = onsetPart[1];
+      }
+      // Type III: s + stop + liquid
+      else if (onsetPart[0]==='s' && ['p','t','k','b','d','g'].includes(onsetPart[1]) && ['l','r','w','j'].includes(onsetPart[2])) {
+        onset.pre = 's';
+        onset.init = onsetPart[1];
+        onset.post = onsetPart[2];
+      }
+      else {
+        onset.init = onsetPart.join('');
+      }
+
+      // Coda clustering
+      const prefinalAllowed = ['m','n','ŋ','l','s'];
+      if (codaPart.length > 0) {
+        if (prefinalAllowed.includes(codaPart[0])) {
+          rhyme.prefinal = codaPart[0];
+          codaPart = codaPart.slice(1);
+        }
+        rhyme.final = codaPart[0] || '';
+        rhyme.pf1 = codaPart[1] || '';
+        rhyme.pf2 = codaPart[2] || '';
+        rhyme.pf3 = codaPart[3] || '';
+      }
+
+      // Fill UI
+      document.getElementById('preInitial').textContent = onset.pre;
+      document.getElementById('initial').textContent = onset.init;
+      document.getElementById('postInitial').textContent = onset.post;
+
+      document.getElementById('peak').textContent = rhyme.peak;
+      document.getElementById('prefinal').textContent = rhyme.prefinal;
+      document.getElementById('final').textContent = rhyme.final;
+      document.getElementById('postFinal1').textContent = rhyme.pf1;
+      document.getElementById('postFinal2').textContent = rhyme.pf2;
+      document.getElementById('postFinal3').textContent = rhyme.pf3;
+    }
+  </script>
+
+
   </section>
 <!-- Footer -->
 <footer>
