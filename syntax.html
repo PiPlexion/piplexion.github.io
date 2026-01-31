@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Coming Soon - PiPlexion Lab</title>
+  <title>Syntax Lab - PiPlexion Lab</title>
   <link rel="stylesheet" href="style.css">
   <link rel="icon" href="favicon.png" type="image/png">
 </head>
@@ -14,7 +14,6 @@
   <a href="index.html">Home</a> |
   <a href="phonetics.html">Phonetics Lab</a> |
   <a href="morphology.html">Morphology Lab</a> |
-  <a href="syntax.html">Syntax Lab</a> |
   <a href="semantics.html">Semantics Lab</a> |
   <a href="pragmatics.html">Pragmatics Lab</a> |
   <a href="discourse.html">Discourse Lab</a> |
@@ -22,14 +21,165 @@
 </nav>
 <hr>
 
-<!-- Coming Soon Panel -->
+<!-- Syntax Lab -->
 <section class="tool-box">
-  <h2>Coming Soon!</h2>
+  <h2>Synatx Lab</h2>
   <p>
-    This lab is currently under construction. We're working on exciting features and interactive tools to help you explore 
-    <strong>linguistics like never before</strong>! 
+     Generate tree diagrams
   </p>
-  <p>Stay tuned — PiPlexion will be updated soon. ✨</p>
+
+  <!-- External stylesheet (colors & theme controlled there) -->
+  <link rel="stylesheet" href="style.css">
+
+  <!-- D3.js -->
+  <script src="https://d3js.org/d3.v7.min.js"></script>
+
+  <style>
+    body { font-family: serif; margin: 40px; }
+    h1 { text-align: center; margin-bottom: 5px; }
+    .tools-line { text-align: center; font-style: italic; margin-bottom: 35px; }
+    .tool-box { max-width: 1000px; margin: auto; }
+    textarea { width: 100%; min-height: 120px; font-family: monospace; font-size: 14px; padding: 12px; resize: none; overflow: hidden; }
+    button { margin-top: 12px; margin-right: 10px; padding: 8px 16px; cursor: pointer; }
+    #tree-container { margin-top: 40px; border: 1px solid; min-height: 600px; overflow: auto; }
+    svg { display: block; }
+    .node text { cursor: pointer; user-select: none; }
+    .triangle { font-style: italic; }
+    .link { fill: none; stroke-width: 2px; }
+    .movement { stroke-dasharray: 5,5; marker-end: url(#arrowhead); }
+  </style>
+</head>
+<body>
+
+<h1>Syntax Tree Generator</h1>
+<div class="tool-box">
+  <h2>Bracket Representation Input</h2>
+  <textarea id="input">[S [NP This] [VP [V is] [^NP an apple]]]</textarea>
+  <br>
+  <button onclick="generateTree()">Generate Tree</button>
+  <button onclick="toggleMovement()">Toggle Trace / Movement</button>
+  <button onclick="downloadPNG()">Download PNG</button>
+  <div id="tree-container"></div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  /* ================= AUTO-EXPANDING INPUT ================= */
+  const textarea = document.getElementById("input");
+  textarea.addEventListener("input", function () {
+    this.style.height = "auto";
+    this.style.height = this.scrollHeight + "px";
+  });
+
+  /* ================= BRACKET PARSER ================= */
+  function parseBrackets(input) {
+    let tokens = input.match(/\[|\]|\^?[^\s\[\]]+/g);
+    let index = 0;
+    function parseNode() {
+      if (tokens[index] !== "[") return null;
+      index++;
+      let label = tokens[index++];
+      let isTriangle = false;
+      if (label.startsWith("^")) { label = label.slice(1); isTriangle = true; }
+      let node = { name: label, children: [], triangle: isTriangle };
+      while (tokens[index] !== "]") {
+        if (tokens[index] === "[") { node.children.push(parseNode()); }
+        else { node.children.push({ name: tokens[index++], children: [] }); }
+      }
+      index++;
+      return node;
+    }
+    return parseNode();
+  }
+
+  /* ================= TREE DRAWING ================= */
+  let svg, root, showMovement = false;
+
+  window.generateTree = function() {
+    document.getElementById("tree-container").innerHTML = "";
+    const data = parseBrackets(textarea.value);
+    svg = d3.select("#tree-container").append("svg");
+
+    svg.append("defs").append("marker")
+      .attr("id", "arrowhead")
+      .attr("viewBox", "-0 -5 10 10")
+      .attr("refX", 25)
+      .attr("refY", 0)
+      .attr("orient", "auto")
+      .attr("markerWidth", 6)
+      .attr("markerHeight", 6)
+      .append("path")
+      .attr("d", "M0,-5L10,0L0,5");
+
+    root = d3.hierarchy(data);
+    const treeLayout = d3.tree().nodeSize([90,130]);
+    treeLayout(root);
+
+    const nodes = root.descendants();
+    const minX = d3.min(nodes, d => d.x);
+    const maxX = d3.max(nodes, d => d.x);
+    const maxY = d3.max(nodes, d => d.y);
+    const width = maxX - minX + 240;
+    const height = maxY + 200;
+    svg.attr("width", width).attr("height", height);
+
+    const g = svg.append("g").attr("transform", `translate(${Math.abs(minX)+120},60)`);
+
+    g.selectAll(".link").data(root.links()).enter().append("path")
+      .attr("class","link")
+      .attr("d", d3.linkVertical().x(d=>d.x).y(d=>d.y));
+
+    const node = g.selectAll(".node").data(nodes).enter().append("g")
+      .attr("class","node")
+      .attr("transform", d=>`translate(${d.x},${d.y})`);
+
+    node.append("text")
+      .attr("dy", "-0.6em")
+      .attr("text-anchor","middle")
+      .attr("class", d=>d.data.triangle?"triangle":"")
+      .text(d=>d.data.name)
+      .on("click", function(event,d){
+        const updated = prompt("Edit node label:", d.data.name);
+        if(updated){ d.data.name = updated; d3.select(this).text(updated); }
+      });
+
+    if(showMovement) drawMovement(g,nodes);
+  };
+
+  /* ================= MOVEMENT / TRACE ================= */
+  function drawMovement(g,nodes){
+    if(nodes.length<2) return;
+    const source = nodes[nodes.length-1];
+    const target = nodes[0];
+    g.append("path").attr("class","movement")
+      .attr("d", `M ${source.x},${source.y} Q ${(source.x+target.x)/2},${target.y-120} ${target.x},${target.y}`);
+  }
+
+  window.toggleMovement = function(){ showMovement = !showMovement; generateTree(); };
+
+  /* ================= PNG DOWNLOAD ================= */
+  window.downloadPNG = function(){
+    const svgNode = document.querySelector("svg");
+    const serializer = new XMLSerializer();
+    const svgStr = serializer.serializeToString(svgNode);
+    const canvas = document.createElement("canvas");
+    const ctx = canvas.getContext("2d");
+    const img = new Image();
+    img.onload = function(){
+      canvas.width = img.width;
+      canvas.height = img.height;
+      ctx.drawImage(img,0,0);
+      const link = document.createElement("a");
+      link.download="piplexion-syntax-tree.png";
+      link.href = canvas.toDataURL("image/png");
+      link.click();
+    };
+    img.src = "data:image/svg+xml;base64," + btoa(svgStr);
+  };
+});
+</script>
+
+  
 </section>
 
 <!-- Footer -->
