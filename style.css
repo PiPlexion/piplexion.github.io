@@ -185,6 +185,8 @@ h2 + ul li a:hover {
   text-decoration: underline;
 }
 
-
+.branch, .triangle{
+  stroke: currentColor;
+}
 
 
